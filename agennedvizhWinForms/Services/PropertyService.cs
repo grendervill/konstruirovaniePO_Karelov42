@@ -13,7 +13,7 @@ namespace RealEstateAgency.Services
         {
             _dbService = dbService;
         }
-
+// READ - метод GetAllProperties и GetPropertyById
         public List<Property> GetAllProperties()
         {
             var query = @"
@@ -41,7 +41,7 @@ namespace RealEstateAgency.Services
 
             return dataTable.Rows.Count > 0 ? MapProperty(dataTable.Rows[0]) : null;
         }
-
+// CREATE - метод AddProperty CRUD
         public void AddProperty(Property property)
         {
             var query = @"
@@ -64,7 +64,7 @@ namespace RealEstateAgency.Services
 
             _dbService.ExecuteNonQuery(query, parameters);
         }
-
+// UPDATE - метод UpdateProperty
         public void UpdateProperty(Property property)
         {
             var query = @"
@@ -98,7 +98,7 @@ namespace RealEstateAgency.Services
 
             _dbService.ExecuteNonQuery(query, parameters);
         }
-
+// DELETE - метод DeleteProperty
         public void DeleteProperty(int id)
         {
             var query = "DELETE FROM properties WHERE id = @id";

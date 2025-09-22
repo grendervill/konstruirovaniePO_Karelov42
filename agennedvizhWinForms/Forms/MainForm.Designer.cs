@@ -8,6 +8,7 @@ namespace RealEstateAgency.Forms
         private TabPage tabPageClients;
         private TabPage tabPageDeals;
         private TabPage tabPageBookings;
+        private TabPage tabPageEmployees;
         private DataGridView dgvProperties;
         private Button btnAddProperty;
         private Button btnEditProperty;
@@ -29,6 +30,11 @@ namespace RealEstateAgency.Forms
         private Button btnCreateRentalDeal;
         private Button btnCancelBooking;
         private Label lblBookingsCount;
+        private DataGridView dgvEmployees;
+        private Button btnAddEmployee;
+        private Button btnEditEmployee;
+        private Button btnDeleteEmployee;
+        private Label lblEmployeesCount;
 
         protected override void Dispose(bool disposing)
         {
@@ -66,6 +72,12 @@ namespace RealEstateAgency.Forms
             this.btnEditBooking = new Button();
             this.btnAddBooking = new Button();
             this.dgvBookings = new DataGridView();
+            this.tabPageEmployees = new TabPage();
+            this.lblEmployeesCount = new Label();
+            this.btnDeleteEmployee = new Button();
+            this.btnEditEmployee = new Button();
+            this.btnAddEmployee = new Button();
+            this.dgvEmployees = new DataGridView();
             this.btnRefresh = new Button();
             this.tabControl1.SuspendLayout();
             this.tabPageProperties.SuspendLayout();
@@ -76,6 +88,8 @@ namespace RealEstateAgency.Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvDeals)).BeginInit();
             this.tabPageBookings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBookings)).BeginInit();
+            this.tabPageEmployees.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEmployees)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -84,6 +98,7 @@ namespace RealEstateAgency.Forms
             this.tabControl1.Controls.Add(this.tabPageClients);
             this.tabControl1.Controls.Add(this.tabPageDeals);
             this.tabControl1.Controls.Add(this.tabPageBookings);
+            this.tabControl1.Controls.Add(this.tabPageEmployees);
             this.tabControl1.Dock = DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -371,6 +386,76 @@ namespace RealEstateAgency.Forms
             this.dgvBookings.Size = new System.Drawing.Size(980, 502);
             this.dgvBookings.TabIndex = 0;
             // 
+            // tabPageEmployees
+            // 
+            this.tabPageEmployees.Controls.Add(this.lblEmployeesCount);
+            this.tabPageEmployees.Controls.Add(this.btnDeleteEmployee);
+            this.tabPageEmployees.Controls.Add(this.btnEditEmployee);
+            this.tabPageEmployees.Controls.Add(this.btnAddEmployee);
+            this.tabPageEmployees.Controls.Add(this.dgvEmployees);
+            this.tabPageEmployees.Location = new System.Drawing.Point(4, 24);
+            this.tabPageEmployees.Name = "tabPageEmployees";
+            this.tabPageEmployees.Padding = new Padding(3);
+            this.tabPageEmployees.Size = new System.Drawing.Size(992, 572);
+            this.tabPageEmployees.TabIndex = 4;
+            this.tabPageEmployees.Text = "Сотрудники";
+            this.tabPageEmployees.UseVisualStyleBackColor = true;
+            // 
+            // lblEmployeesCount
+            // 
+            this.lblEmployeesCount.AutoSize = true;
+            this.lblEmployeesCount.Location = new System.Drawing.Point(6, 547);
+            this.lblEmployeesCount.Name = "lblEmployeesCount";
+            this.lblEmployeesCount.Size = new System.Drawing.Size(127, 15);
+            this.lblEmployeesCount.TabIndex = 4;
+            this.lblEmployeesCount.Text = "Всего сотрудников: 0";
+            // 
+            // btnDeleteEmployee
+            // 
+            this.btnDeleteEmployee.Location = new System.Drawing.Point(246, 6);
+            this.btnDeleteEmployee.Name = "btnDeleteEmployee";
+            this.btnDeleteEmployee.Size = new System.Drawing.Size(114, 30);
+            this.btnDeleteEmployee.TabIndex = 3;
+            this.btnDeleteEmployee.Text = "Удалить";
+            this.btnDeleteEmployee.UseVisualStyleBackColor = true;
+            this.btnDeleteEmployee.Click += new System.EventHandler(this.btnDeleteEmployee_Click);
+            // 
+            // btnEditEmployee
+            // 
+            this.btnEditEmployee.Location = new System.Drawing.Point(126, 6);
+            this.btnEditEmployee.Name = "btnEditEmployee";
+            this.btnEditEmployee.Size = new System.Drawing.Size(114, 30);
+            this.btnEditEmployee.TabIndex = 2;
+            this.btnEditEmployee.Text = "Редактировать";
+            this.btnEditEmployee.UseVisualStyleBackColor = true;
+            this.btnEditEmployee.Click += new System.EventHandler(this.btnEditEmployee_Click);
+            // 
+            // btnAddEmployee
+            // 
+            this.btnAddEmployee.Location = new System.Drawing.Point(6, 6);
+            this.btnAddEmployee.Name = "btnAddEmployee";
+            this.btnAddEmployee.Size = new System.Drawing.Size(114, 30);
+            this.btnAddEmployee.TabIndex = 1;
+            this.btnAddEmployee.Text = "Добавить";
+            this.btnAddEmployee.UseVisualStyleBackColor = true;
+            this.btnAddEmployee.Click += new System.EventHandler(this.btnAddEmployee_Click);
+            // 
+            // dgvEmployees
+            // 
+            this.dgvEmployees.AllowUserToAddRows = false;
+            this.dgvEmployees.AllowUserToDeleteRows = false;
+            this.dgvEmployees.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
+            | AnchorStyles.Left) 
+            | AnchorStyles.Right)));
+            this.dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvEmployees.Location = new System.Drawing.Point(6, 42);
+            this.dgvEmployees.Name = "dgvEmployees";
+            this.dgvEmployees.ReadOnly = true;
+            this.dgvEmployees.RowTemplate.Height = 25;
+            this.dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dgvEmployees.Size = new System.Drawing.Size(980, 502);
+            this.dgvEmployees.TabIndex = 0;
+            // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
@@ -405,6 +490,9 @@ namespace RealEstateAgency.Forms
             this.tabPageBookings.ResumeLayout(false);
             this.tabPageBookings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBookings)).EndInit();
+            this.tabPageEmployees.ResumeLayout(false);
+            this.tabPageEmployees.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEmployees)).EndInit();
             this.ResumeLayout(false);
 
         }

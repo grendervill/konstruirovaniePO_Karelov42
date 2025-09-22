@@ -14,5 +14,7 @@ namespace RealEstateAgency.Models
         public DateTime? HireDate { get; set; }
         public decimal? Salary { get; set; }
         public DateTime CreatedAt { get; set; }
+        
+        public string FullName => $"{LastName} {FirstName} {MiddleName}".Trim();
     }
 }

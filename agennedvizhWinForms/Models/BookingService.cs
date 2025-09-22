@@ -114,28 +114,23 @@ namespace RealEstateAgency.Services
             var parameters = new NpgsqlParameter[] { new("@id", id) };
             _dbService.ExecuteNonQuery(query, parameters);
         }
-
-        public bool CheckPropertyAvailability(int propertyId, DateTime checkDate)
-        {
-            var query = "SELECT check_property_availability(@property_id, @check_date)";
-            var parameters = new NpgsqlParameter[]
-            {
-                new("@property_id", propertyId),
-                new("@check_date", checkDate)
-            };
-
-            var result = _dbService.ExecuteScalar(query, parameters);
-            return result != null && Convert.ToBoolean(result);
-        }
-
+// Выборка с параметрами
         public List<Property> GetAvailableProperties(DateTime checkDate)
         {
+            // Получаем все объекты недвижимости со статусом "Свободен" или "Забронирован"
+            // и которые не забронированы на указанную дату
             var query = @"
-                SELECT p.*, pt.name as propertytypename, ps.name as statusname
+                SELECT DISTINCT p.*, pt.name as propertytypename, ps.name as statusname
                 FROM properties p
                 JOIN property_types pt ON p.property_type_id = pt.id
                 JOIN property_statuses ps ON p.status_id = ps.id
-                WHERE check_property_availability(p.id, @check_date) = true
+                WHERE ps.name IN ('Свободен', 'Забронирован')
+                AND p.id NOT IN (
+                    SELECT b.property_id 
+                    FROM bookings b 
+                    WHERE b.status = 'active'
+                    AND @check_date BETWEEN b.start_date AND COALESCE(b.end_date, @check_date)
+                )
                 ORDER BY p.id";
 
             var parameters = new NpgsqlParameter[] { new("@check_date", checkDate) };

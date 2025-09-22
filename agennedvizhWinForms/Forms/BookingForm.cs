@@ -10,15 +10,18 @@ namespace RealEstateAgency.Forms
         private readonly BookingService _bookingService;
         private readonly PropertyService _propertyService;
         private readonly ClientService _clientService;
+        private readonly EmployeeService _employeeService;
         private Booking _booking;
         private bool _isNew;
 
-        public BookingForm(BookingService bookingService, PropertyService propertyService, ClientService clientService, Booking? booking = null)
+        public BookingForm(BookingService bookingService, PropertyService propertyService, 
+                          ClientService clientService, EmployeeService employeeService, Booking? booking = null)
         {
             InitializeComponent();
             _bookingService = bookingService;
             _propertyService = propertyService;
             _clientService = clientService;
+            _employeeService = employeeService;
             _booking = booking ?? new Booking();
             _isNew = booking == null;
             
@@ -73,12 +76,10 @@ namespace RealEstateAgency.Forms
         {
             try
             {
-                var dbService = new DatabaseService();
-                var query = "SELECT id, CONCAT(last_name, ' ', first_name, ' ', COALESCE(middle_name, '')) as fullname FROM employees ORDER BY last_name";
-                var employees = dbService.ExecuteQueryDisconnected(query);
+                var employees = _employeeService.GetAllEmployees();
                 cmbEmployee.DataSource = employees;
-                cmbEmployee.DisplayMember = "fullname";
-                cmbEmployee.ValueMember = "id";
+                cmbEmployee.DisplayMember = "FullName";
+                cmbEmployee.ValueMember = "Id";
             }
             catch (Exception ex)
             {
@@ -97,7 +98,7 @@ namespace RealEstateAgency.Forms
             txtNotes.Text = _booking.Notes;
             
             // Установка выбранных значений
-            if (cmbProperty.Items.Count > 0)
+            if (cmbProperty.Items.Count > 0 && _booking.PropertyId > 0)
             {
                 for (int i = 0; i < cmbProperty.Items.Count; i++)
                 {
@@ -110,7 +111,7 @@ namespace RealEstateAgency.Forms
                 }
             }
             
-            if (cmbClient.Items.Count > 0)
+            if (cmbClient.Items.Count > 0 && _booking.ClientId > 0)
             {
                 for (int i = 0; i < cmbClient.Items.Count; i++)
                 {
@@ -123,12 +124,12 @@ namespace RealEstateAgency.Forms
                 }
             }
             
-            if (cmbEmployee.Items.Count > 0)
+            if (cmbEmployee.Items.Count > 0 && _booking.EmployeeId > 0)
             {
                 for (int i = 0; i < cmbEmployee.Items.Count; i++)
                 {
-                    var row = ((System.Data.DataRowView)cmbEmployee.Items[i]).Row;
-                    if (Convert.ToInt32(row["id"]) == _booking.EmployeeId)
+                    var item = (Employee)cmbEmployee.Items[i];
+                    if (item.Id == _booking.EmployeeId)
                     {
                         cmbEmployee.SelectedIndex = i;
                         break;
@@ -145,11 +146,11 @@ namespace RealEstateAgency.Forms
             try
             {
                 _booking.PropertyId = cmbProperty.SelectedItem != null ? 
-                    Convert.ToInt32(((Property)cmbProperty.SelectedItem).Id) : 0;
+                    ((Property)cmbProperty.SelectedItem).Id : 0;
                 _booking.ClientId = cmbClient.SelectedItem != null ? 
-                    Convert.ToInt32(((Client)cmbClient.SelectedItem).Id) : 0;
+                    ((Client)cmbClient.SelectedItem).Id : 0;
                 _booking.EmployeeId = cmbEmployee.SelectedItem != null ? 
-                    Convert.ToInt32(((System.Data.DataRowView)cmbEmployee.SelectedItem)["id"]) : 0;
+                    ((Employee)cmbEmployee.SelectedItem).Id : 0;
                 _booking.BookingDate = dtpBookingDate.Value;
                 _booking.StartDate = dtpStartDate.Value;
                 _booking.EndDate = chkIndefinite.Checked ? null : dtpEndDate.Value;
@@ -178,7 +179,7 @@ namespace RealEstateAgency.Forms
 
         private bool ValidateInput()
         {
-            if (cmbProperty.SelectedIndex == -1)
+            if (cmbProperty.SelectedIndex == -1 || cmbProperty.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите объект недвижимости", "Предупреждение", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -186,7 +187,7 @@ namespace RealEstateAgency.Forms
                 return false;
             }
 
-            if (cmbClient.SelectedIndex == -1)
+            if (cmbClient.SelectedIndex == -1 || cmbClient.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите клиента", "Предупреждение", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -194,7 +195,7 @@ namespace RealEstateAgency.Forms
                 return false;
             }
 
-            if (cmbEmployee.SelectedIndex == -1)
+            if (cmbEmployee.SelectedIndex == -1 || cmbEmployee.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, выберите сотрудника", "Предупреждение", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);

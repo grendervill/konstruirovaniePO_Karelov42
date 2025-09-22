@@ -13,6 +13,7 @@ namespace RealEstateAgency.Forms
         private readonly DealService _dealService;
         private readonly BookingService _bookingService;
         private readonly RentalService _rentalService;
+        private readonly EmployeeService _employeeService;
 
         public MainForm()
         {
@@ -23,6 +24,7 @@ namespace RealEstateAgency.Forms
             _dealService = new DealService(_dbService);
             _bookingService = new BookingService(_dbService);
             _rentalService = new RentalService(_dbService);
+            _employeeService = new EmployeeService(_dbService);
             LoadData();
         }
 
@@ -32,8 +34,9 @@ namespace RealEstateAgency.Forms
             LoadClients();
             LoadDeals();
             LoadBookings();
+            LoadEmployees();
         }
-
+// Отображение справочников в DataGridView
         private void LoadProperties()
         {
             try
@@ -94,6 +97,22 @@ namespace RealEstateAgency.Forms
             }
         }
 
+        private void LoadEmployees()
+        {
+            try
+            {
+                var employees = _employeeService.GetAllEmployees();
+                dgvEmployees.DataSource = employees;
+                lblEmployeesCount.Text = $"Всего сотрудников: {employees.Count}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки сотрудников: {ex.Message}", "Ошибка", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Существующие методы для свойств и клиентов...
         private void btnAddProperty_Click(object sender, EventArgs e)
         {
             var propertyForm = new PropertyForm(_propertyService);
@@ -223,7 +242,7 @@ namespace RealEstateAgency.Forms
 
         private void btnAddBooking_Click(object sender, EventArgs e)
         {
-            var bookingForm = new BookingForm(_bookingService, _propertyService, _clientService);
+            var bookingForm = new BookingForm(_bookingService, _propertyService, _clientService, _employeeService);
             if (bookingForm.ShowDialog() == DialogResult.OK)
             {
                 LoadBookings();
@@ -236,7 +255,7 @@ namespace RealEstateAgency.Forms
             if (dgvBookings.SelectedRows.Count > 0)
             {
                 var selectedBooking = (Booking)dgvBookings.SelectedRows[0].DataBoundItem;
-                var bookingForm = new BookingForm(_bookingService, _propertyService, _clientService, selectedBooking);
+                var bookingForm = new BookingForm(_bookingService, _propertyService, _clientService, _employeeService, selectedBooking);
                 if (bookingForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadBookings();
@@ -345,6 +364,65 @@ namespace RealEstateAgency.Forms
             }
         }
 
+        // Новые методы для сотрудников
+        private void btnAddEmployee_Click(object sender, EventArgs e)
+        {
+            var employeeForm = new EmployeeForm(_employeeService);
+            if (employeeForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadEmployees();
+            }
+        }
+
+        private void btnEditEmployee_Click(object sender, EventArgs e)
+        {
+            if (dgvEmployees.SelectedRows.Count > 0)
+            {
+                var selectedEmployee = (Employee)dgvEmployees.SelectedRows[0].DataBoundItem;
+                var employeeForm = new EmployeeForm(_employeeService, selectedEmployee);
+                if (employeeForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadEmployees();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите сотрудника для редактирования", "Предупреждение", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnDeleteEmployee_Click(object sender, EventArgs e)
+        {
+            if (dgvEmployees.SelectedRows.Count > 0)
+            {
+                var result = MessageBox.Show("Вы уверены, что хотите удалить выбранного сотрудника?", 
+                    "Подтверждение удаления", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        var selectedEmployee = (Employee)dgvEmployees.SelectedRows[0].DataBoundItem;
+                        _employeeService.DeleteEmployee(selectedEmployee.Id);
+                        LoadEmployees();
+                        MessageBox.Show("Сотрудник успешно удален", "Успех", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка удаления сотрудника: {ex.Message}", "Ошибка", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите сотрудника для удаления", "Предупреждение", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+// Настройка столбцов таблицы в MainForm_Load
         private void MainForm_Load(object sender, EventArgs e)
         {
             // Настройка DataGridView для свойств
@@ -391,6 +469,18 @@ namespace RealEstateAgency.Forms
             dgvBookings.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "EndDate", HeaderText = "Окончание" });
             dgvBookings.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Status", HeaderText = "Статус" });
             dgvBookings.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Amount", HeaderText = "Сумма" });
+
+            // Настройка DataGridView для сотрудников
+            dgvEmployees.AutoGenerateColumns = false;
+            dgvEmployees.Columns.Clear();
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Id", HeaderText = "ID" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "LastName", HeaderText = "Фамилия" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "FirstName", HeaderText = "Имя" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "MiddleName", HeaderText = "Отчество" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Position", HeaderText = "Должность" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Phone", HeaderText = "Телефон" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Email", HeaderText = "Email" });
+            dgvEmployees.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "Salary", HeaderText = "Зарплата" });
         }
     }
 }
