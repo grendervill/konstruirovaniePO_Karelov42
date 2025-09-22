@@ -30,10 +30,10 @@ namespace RealEstateAgency.Services
             var dataTable = _dbService.ExecuteQueryDisconnected(query);
             return MapDeals(dataTable);
         }
-
+// Выборка с использованием хранимой процедуры
         public List<DealReportItem> GetDealsByPeriod(DateTime startDate, DateTime endDate)
         {
-            var query = "SELECT * FROM get_deals_by_period(@start_date, @end_date)";
+            var query = "SELECT * FROM get_deals_by_period(@start_date, @end_date)"; // Хранимая процедура
             
             var parameters = new NpgsqlParameter[]
             {
@@ -41,7 +41,7 @@ namespace RealEstateAgency.Services
                 new("@end_date", endDate)
             };
 
-            var dataTable = _dbService.ExecuteQueryConnected(query, parameters);
+            var dataTable = _dbService.ExecuteQueryConnected(query, parameters); // Использование хранимой процедуры
             return MapDealReportItems(dataTable);
         }
 
