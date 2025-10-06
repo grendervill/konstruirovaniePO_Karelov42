@@ -19,6 +19,7 @@ namespace RealEstateAgency.Services
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
         }
 
+        // Подключенный способ (Connected) - данные доступны только пока открыто соединение
         // Подключенный способ (Connected)
         public DataTable ExecuteQueryConnected(string query, params NpgsqlParameter[]? parameters)
         {
@@ -37,6 +38,7 @@ namespace RealEstateAgency.Services
             return dataTable;
         }
 
+        // Отключенный способ (Disconnected) - данные доступны после закрытия соединения
         // Отключенный способ (Disconnected)
         public DataTable ExecuteQueryDisconnected(string query, params NpgsqlParameter[]? parameters)
         {

@@ -41,6 +41,7 @@ namespace RealEstateAgency.Services
                 new("@end_date", endDate)
             };
 
+            // Подключенный способ с хранимой процедурой
             var dataTable = _dbService.ExecuteQueryConnected(query, parameters); // Использование хранимой процедуры
             return MapDealReportItems(dataTable);
         }
@@ -55,6 +56,7 @@ namespace RealEstateAgency.Services
                 new("@end_date", endDate)
             };
 
+            // Отключенный способ с хранимой процедурой
             var dataTable = _dbService.ExecuteQueryDisconnected(query, parameters);
             return MapEmployeeStatistics(dataTable);
         }

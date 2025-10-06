@@ -23,10 +23,11 @@ namespace RealEstateAgency.Services
                 JOIN property_statuses ps ON p.status_id = ps.id
                 ORDER BY p.id";
 
+            // Отключенный способ
             var dataTable = _dbService.ExecuteQueryDisconnected(query);
             return MapProperties(dataTable);
         }
-
+        
         public Property? GetPropertyById(int id)
         {
             var query = @"
@@ -36,12 +37,14 @@ namespace RealEstateAgency.Services
                 JOIN property_statuses ps ON p.status_id = ps.id
                 WHERE p.id = @id";
 
+            // Подключенный способ
             var parameters = new NpgsqlParameter[] { new("@id", id) };
             var dataTable = _dbService.ExecuteQueryConnected(query, parameters);
 
             return dataTable.Rows.Count > 0 ? MapProperty(dataTable.Rows[0]) : null;
         }
 // CREATE - метод AddProperty CRUD
+        // CREATE
         public void AddProperty(Property property)
         {
             var query = @"

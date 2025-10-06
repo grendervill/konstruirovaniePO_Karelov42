@@ -37,12 +37,13 @@ namespace RealEstateAgency.Forms
             LoadEmployees();
         }
 // Отображение справочников в DataGridView
-        private void LoadProperties()
+        private void LoadProperties() // - отображение справочников в DataGridView
         {
             try
             {
-                var properties = _propertyService.GetAllProperties();
-                dgvProperties.DataSource = properties;
+                var properties = _propertyService.GetAllProperties(); // Получение данных
+                dgvProperties.DataSource = properties; // Отображение в таблице
+                // Связанная сущность: Property -> PropertyType, PropertyStatus
                 lblPropertiesCount.Text = $"Всего объектов: {properties.Count}";
             }
             catch (Exception ex)
