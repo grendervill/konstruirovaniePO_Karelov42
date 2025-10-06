@@ -114,7 +114,7 @@ namespace RealEstateAgency.Forms
         {
             dgvReport.AutoGenerateColumns = false;
             dgvReport.Columns.Clear();
-            
+            var deals = _dealService.GetDealsByPeriod(dtpStartDate.Value, dtpEndDate.Value); // вызов метода, который вызывает хранимую процедуру
             dgvReport.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "EmployeeName", HeaderText = "Сотрудник", Name = "EmployeeName" });
             dgvReport.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "DealsCount", HeaderText = "Кол-во сделок", Name = "DealsCount" });
             dgvReport.Columns.Add(new DataGridViewTextBoxColumn() { DataPropertyName = "TotalAmount", HeaderText = "Общая сумма", Name = "TotalAmount" });

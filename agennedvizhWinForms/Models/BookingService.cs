@@ -115,7 +115,7 @@ namespace RealEstateAgency.Services
             _dbService.ExecuteNonQuery(query, parameters);
         }
 
-        // Выборка с параметрами
+        // Выборка с параметрами (raw sql)
         public List<Property> GetAvailableProperties(DateTime checkDate)
         {
             // Получаем все объекты недвижимости со статусом "Свободен" или "Забронирован"

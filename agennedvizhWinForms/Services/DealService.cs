@@ -33,7 +33,7 @@ namespace RealEstateAgency.Services
 // Выборка с использованием хранимой процедуры
         public List<DealReportItem> GetDealsByPeriod(DateTime startDate, DateTime endDate)
         {
-            var query = "SELECT * FROM get_deals_by_period(@start_date, @end_date)"; // Хранимая процедура
+            var query = "SELECT * FROM get_deals_by_period(@start_date, @end_date)"; // Вызов хранимой процедуры
     
             var parameters = new NpgsqlParameter[]
             {
@@ -48,7 +48,7 @@ namespace RealEstateAgency.Services
 
         public List<EmployeeStatistics> GetEmployeeStatistics(DateTime startDate, DateTime endDate)
         {
-            var query = "SELECT * FROM get_employee_statistics(@start_date, @end_date)";
+            var query = "SELECT * FROM get_employee_statistics(@start_date, @end_date)"; // ← вызов хранимой процедуры
     
             var parameters = new NpgsqlParameter[]
             {
@@ -57,7 +57,7 @@ namespace RealEstateAgency.Services
             };
 
             // Отключенный способ с хранимой процедурой
-            var dataTable = _dbService.ExecuteQueryDisconnected(query, parameters);
+            var dataTable = _dbService.ExecuteQueryDisconnected(query, parameters); // Отключенный способ
             return MapEmployeeStatistics(dataTable);
         }
 
