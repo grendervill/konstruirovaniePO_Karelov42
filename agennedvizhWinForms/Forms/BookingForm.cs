@@ -44,10 +44,23 @@ namespace RealEstateAgency.Forms
         {
             try
             {
-                var availableProperties = _bookingService.GetAvailableProperties(DateTime.Now);
-                cmbProperty.DataSource = availableProperties;
-                cmbProperty.DisplayMember = "Address";
-                cmbProperty.ValueMember = "Id";
+                // Если это редактирование, загружаем все объекты, а не только доступные
+                if (!_isNew)
+                {
+                    var allProperties = _propertyService.GetAllProperties();
+                    cmbProperty.DataSource = allProperties;
+                    cmbProperty.DisplayMember = "Address";
+                    cmbProperty.ValueMember = "Id";
+                }
+                else
+                {
+                    // Если это новое бронирование, загружаем только доступные
+                    var availableProperties = _bookingService.GetAvailableProperties(DateTime.Now);
+                    cmbProperty.DataSource = availableProperties;
+                    cmbProperty.DisplayMember = "Address";
+                    cmbProperty.ValueMember = "Id";
+                }
+                cmbProperty.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -64,6 +77,7 @@ namespace RealEstateAgency.Forms
                 cmbClient.DataSource = clients;
                 cmbClient.DisplayMember = "FullName";
                 cmbClient.ValueMember = "Id";
+                cmbClient.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -80,6 +94,7 @@ namespace RealEstateAgency.Forms
                 cmbEmployee.DataSource = employees;
                 cmbEmployee.DisplayMember = "FullName";
                 cmbEmployee.ValueMember = "Id";
+                cmbEmployee.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
@@ -96,6 +111,12 @@ namespace RealEstateAgency.Forms
             chkIndefinite.Checked = _booking.EndDate == null;
             txtAmount.Text = _booking.Amount?.ToString();
             txtNotes.Text = _booking.Notes;
+            
+            // Загружаем все объекты для редактирования
+            var allProperties = _propertyService.GetAllProperties();
+            cmbProperty.DataSource = allProperties;
+            cmbProperty.DisplayMember = "Address";
+            cmbProperty.ValueMember = "Id";
             
             // Установка выбранных значений
             if (cmbProperty.Items.Count > 0 && _booking.PropertyId > 0)
@@ -145,12 +166,17 @@ namespace RealEstateAgency.Forms
 
             try
             {
-                _booking.PropertyId = cmbProperty.SelectedItem != null ? 
-                    ((Property)cmbProperty.SelectedItem).Id : 0;
-                _booking.ClientId = cmbClient.SelectedItem != null ? 
-                    ((Client)cmbClient.SelectedItem).Id : 0;
-                _booking.EmployeeId = cmbEmployee.SelectedItem != null ? 
-                    ((Employee)cmbEmployee.SelectedItem).Id : 0;
+                // Проверяем, что все ComboBox выбраны
+                if (cmbProperty.SelectedItem == null || cmbClient.SelectedItem == null || cmbEmployee.SelectedItem == null)
+                {
+                    MessageBox.Show("Пожалуйста, выберите все необходимые элементы", "Предупреждение", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                _booking.PropertyId = ((Property)cmbProperty.SelectedItem).Id;
+                _booking.ClientId = ((Client)cmbClient.SelectedItem).Id;
+                _booking.EmployeeId = ((Employee)cmbEmployee.SelectedItem).Id;
                 _booking.BookingDate = dtpBookingDate.Value;
                 _booking.StartDate = dtpStartDate.Value;
                 _booking.EndDate = chkIndefinite.Checked ? null : dtpEndDate.Value;
@@ -172,8 +198,8 @@ namespace RealEstateAgency.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения бронирования: {ex.Message}", "Ошибка", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка сохранения бронирования: {ex.Message}\n\nДетали: {ex.InnerException?.Message}", 
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

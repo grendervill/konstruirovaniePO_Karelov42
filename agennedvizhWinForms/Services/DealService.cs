@@ -34,7 +34,7 @@ namespace RealEstateAgency.Services
         public List<DealReportItem> GetDealsByPeriod(DateTime startDate, DateTime endDate)
         {
             var query = "SELECT * FROM get_deals_by_period(@start_date, @end_date)"; // Хранимая процедура
-            
+    
             var parameters = new NpgsqlParameter[]
             {
                 new("@start_date", startDate),
@@ -48,7 +48,7 @@ namespace RealEstateAgency.Services
         public List<EmployeeStatistics> GetEmployeeStatistics(DateTime startDate, DateTime endDate)
         {
             var query = "SELECT * FROM get_employee_statistics(@start_date, @end_date)";
-            
+    
             var parameters = new NpgsqlParameter[]
             {
                 new("@start_date", startDate),
